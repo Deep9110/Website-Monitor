@@ -1,4 +1,22 @@
 name,url,visitor_xpath
-DMET Odisha,https://dmet.odisha.gov.in,"//div[contains(@class,'total-visitor')]//span[@id='visitor_counter']"
+WSC,https://www.worldskillcenter.org,
 JKMCH,https://jkmchjajpur.odisha.gov.in,"//div[contains(@class,'foter-text')]//span[contains(@class,'website-counter')]"
-BMW Odisha,https://bmwodisha.in/,
+OTDC,https://otdc.odisha.gov.in,
+Govt Press,https://govtpress.odisha.gov.in,
+Dmet,https://dmet.odisha.gov.in,"//div[contains(@class,'total-visitor')]//span[@id='visitor_counter']"
+Dhs,https://dhs.odisha.gov.in,
+Otelp plus,https://otelpplus.odisha.gov.in,
+Odisha Police,https://police.odisha.gov.in,
+Ormas,https://ormas.odisha.gov.in,
+MHI,https://mentalhealthinstitute-scb.odisha.gov.in,
+OPC,https://opc.odisha.gov.in,
+ODLMS,https://odlms.odisha.gov.in,
+FMMCH,https://fmmch.odisha.gov.in,
+Dhivs,https://dhivs.odisha.gov.in,
+Scbmch,https://scbmch.odisha.gov.in,
+Prmmch,https://prmmch.odisha.gov.in,
+Bmwodisha,https://bmwodisha.in,
+Slnmch,https://slnmch.odisha.gov.in,
+Drugscontrol,https://drugscontrol.odisha.gov.in,
+OSWC,https://oswc.in,
+DHHOdisha,dhhodisha.in,
