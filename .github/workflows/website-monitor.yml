@@ -48,7 +48,7 @@ jobs:
         run: |
           echo "=== Maven and website monitoring started ==="
           date -u
-          mvn -B -ntp -DskipTests compile exec:java -Dexec.args="${{ github.event_name }}"
+          mvn -B -ntp -DskipTests compile org.codehaus.mojo:exec-maven-plugin:3.5.0:java -Dexec.args="${{ github.event_name }}"
           echo "=== Maven and website monitoring finished ==="
           date -u
 

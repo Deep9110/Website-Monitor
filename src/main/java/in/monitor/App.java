@@ -23,7 +23,6 @@ import java.util.Properties;
 public class App {
 
   private static final String OPEN = "Open";
-  private static final String CHECK_FAILED = "Check failed";
 
   record Site(String name, String url, String visitorXpath) {}
 
@@ -33,8 +32,15 @@ public class App {
     List<Site> sites = readSites(Path.of("sites.csv"));
     List<Result> results = new ArrayList<>();
 
-    for (Site site : sites) {
-      results.add(check(site));
+    for (int index = 0; index < sites.size(); index++) {
+      Site site = sites.get(index);
+      System.out.printf("[%d/%d] Checking %s%n",
+          index + 1, sites.size(), site.name());
+      Result result = check(site);
+      results.add(result);
+      System.out.printf("[%d/%d] %s: %s; visitors=%s%n",
+          index + 1, sites.size(), site.name(),
+          result.status(), result.visitors());
     }
 
     String stamp = LocalDateTime.now(ZoneId.of("Asia/Kolkata"))
@@ -70,36 +76,32 @@ public class App {
   }
 
   private static Result check(Site site) {
-    WebDriver driver = null;
-    String status = CHECK_FAILED;
+    String status = PageOpenChecker.check(site.url());
     String visitors = "N/A";
 
-    try {
-      ChromeOptions options = new ChromeOptions();
-      options.addArguments(
-          "--headless=new",
-          "--no-sandbox",
-          "--disable-dev-shm-usage",
-          "--window-size=1440,1000");
-      driver = new ChromeDriver(options);
-
-      status = PageOpenChecker.check(driver, site.url());
-      if (OPEN.equals(status)) {
-        try {
-          visitors = VisitorCountChecker.getCount(driver, site.visitorXpath());
-        } catch (RuntimeException e) {
-          visitors = "N/A";
-        }
-      }
-    } catch (RuntimeException e) {
-      status = CHECK_FAILED;
-      visitors = "N/A";
-    } finally {
-      if (driver != null) {
-        try {
-          driver.quit();
-        } catch (WebDriverException ignored) {
-          // The website result is already recorded; continue with the next site.
+    if (OPEN.equals(status) && !site.visitorXpath().isBlank()) {
+      WebDriver driver = null;
+      try {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments(
+            "--headless=new",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--window-size=1440,1000");
+        driver = new ChromeDriver(options);
+        driver.manage().timeouts().pageLoadTimeout(
+            java.time.Duration.ofSeconds(15));
+        driver.get(site.url());
+        visitors = VisitorCountChecker.getCount(driver, site.visitorXpath());
+      } catch (RuntimeException e) {
+        visitors = "N/A";
+      } finally {
+        if (driver != null) {
+          try {
+            driver.quit();
+          } catch (WebDriverException ignored) {
+            // Continue checking the next site.
+          }
         }
       }
     }
