@@ -1,4 +1,6 @@
 in\monitor\App$Site.class
 in\monitor\App.class
 in\monitor\App$1.class
+in\monitor\VisitorCountChecker.class
+in\monitor\PageOpenChecker.class
 in\monitor\App$Result.class
