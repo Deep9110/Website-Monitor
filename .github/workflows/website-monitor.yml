@@ -1,4 +1,3 @@
-
 name: Website Monitor
 
 on:
@@ -47,7 +46,11 @@ jobs:
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
         run: |
-          mvn -B -DskipTests compile exec:java -Dexec.args="${{ github.event_name }}"
+          echo "=== Maven and website monitoring started ==="
+          date -u
+          mvn -B -ntp -DskipTests compile exec:java -Dexec.args="${{ github.event_name }}"
+          echo "=== Maven and website monitoring finished ==="
+          date -u
 
       - name: Upload report artifact
         if: always()
