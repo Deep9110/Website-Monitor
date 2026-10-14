@@ -15,7 +15,7 @@
 - The code is a starter; validate each website and its counter behavior before relying on status emails.
 
 ## Availability checks
-`PageOpenChecker` uses an HTTP GET with 5-second connect and read timeouts and returns `Open` only for HTTP 200; other responses and request errors return `Check failed`. For an open page with a configured visitor XPath, Selenium loads the page with a 15-second timeout and `VisitorCountChecker` waits up to 10 seconds for the counter. Missing or unrecognized counter text is reported as `N/A` and does not change the HTTP status result. Websites are checked sequentially, with progress logged for each site.
+`PageOpenChecker` uses the system `curl` command with TLS verification enabled, follows redirects, and returns `Open` for a final 2xx/3xx response. It uses a 10-second connection timeout and 30-second overall request timeout, and logs the response code or request error. `curl` must be installed and available on `PATH` (it is available on GitHub-hosted Ubuntu and current Windows installations). For an open page with a configured visitor XPath, Selenium loads the page with a 15-second timeout and `VisitorCountChecker` waits up to 10 seconds for the counter. Missing or unrecognized counter text is reported as `N/A` and does not change the HTTP status result. Websites are checked sequentially, with progress logged for each site.
 
 The Excel report contains `Site Name`, `Site URL`, `Status`, and `Visitor Count`.
 

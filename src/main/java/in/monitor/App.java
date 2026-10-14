@@ -67,8 +67,12 @@ public class App {
         String xpath = columns.length > 2
             ? columns[2].replaceAll("^\"|\"$", "").trim()
             : "";
+        String url = columns[1].trim();
+        if (!url.matches("(?i)^https?://.*")) {
+          url = "https://" + url;
+        }
         sites.add(new Site(
-            columns[0].trim(), columns[1].trim(), xpath));
+            columns[0].trim(), url, xpath));
       }
     }
 
