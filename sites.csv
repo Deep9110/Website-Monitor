@@ -1,0 +1,4 @@
+name,url,visitor_xpath
+DMET Odisha,https://dmet.odisha.gov.in,"//*[contains(.,'Total Visitors')]"
+Example Site 2,https://example.com,
+Example Site 3,https://example.org,
