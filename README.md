@@ -5,18 +5,30 @@
 - Can also be started manually using Actions -> Website Monitor -> Run workflow.
 - Checks each URL independently, creates an Excel report, and emails it when SMTP secrets are configured.
 - Does not require your personal PC to be switched on.
+- Uses headless Chrome navigation as the availability check; the HTTP request is diagnostic only.
 
 ## Important limitations
 - GitHub scheduled workflows can be delayed; this is not a guaranteed exact-time scheduler.
 - Manual runs are available to repository users with suitable permissions. An email button for arbitrary recipients requires a separate authenticated web endpoint/service; do not publish a GitHub token in an email link.
 - Visitor counts vary by website. Configure and test a valid `visitor_xpath` for each site. A counter selector can identify a container whose visible text includes "Total Visitors".
-- `sites.csv` contains placeholders. Replace them with your 20 authorized URLs.
+- `sites.csv` contains placeholders. Replace them with your 21 authorized URLs.
 - The code is a starter; validate each website and its counter behavior before relying on status emails.
 
-## Configure the 20 sites
+## Availability checks
+The application records the HTTP pre-check status and response time separately from Selenium's browser navigation status and duration. A failed HTTP pre-check does not prevent Selenium from trying the site. Selenium waits for `document.readyState` to be `complete`, retries transient navigation failures up to two times, and only then classifies a failed navigation as `NOT OPEN`. A browser/configuration error is reported as `CHECK FAILED`; counter and other secondary-check problems can produce `DEGRADED`.
+
+The following optional environment variables (or Java system properties with the same names) control wait behavior:
+- `WEBSITE_WAIT_SECONDS` (default `40`; allowed `30`–`45`)
+- `WEBSITE_SETTLE_SECONDS` (default `2`; allowed `0`–`10`)
+- `WEBSITE_RETRY_DELAY_SECONDS` (default `2`; allowed `0`–`30`)
+
+Page-load timeout is 45 seconds and the visitor-counter wait is 12 seconds. The report's `Response Time (ms)` column is the HTTP pre-check duration; Selenium navigation timing and browser response status are recorded in `Details`.
+
+## Configure the 21 sites
 Edit `sites.csv`:
 `name,url,visitor_xpath`
 Add one row per site. Use an XPath suitable for each site's visitor counter. If a site does not show a public visitor count, leave the XPath blank; report will show N/A.
+Counter extraction recognizes labels such as `Total Visitors` and `Visitors`, as well as a numeric-only value returned by the configured XPath. For other labels or markup, configure the XPath to return the visitor label and count in its text or update the extraction pattern.
 
 ## Configure email
 In GitHub: repository -> Settings -> Secrets and variables -> Actions -> New repository secret.
