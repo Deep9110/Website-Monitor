@@ -11,8 +11,11 @@ public final class PageOpenChecker {
 
   private static final String OPEN = "Open";
   private static final String CHECK_FAILED = "Check failed";
-  private static final int CONNECT_TIMEOUT_SECONDS = 10;
+  private static final int CONNECT_TIMEOUT_SECONDS = 20;
   private static final int MAX_TIME_SECONDS = 30;
+  private static final int RETRIES = 2;
+  private static final int RETRY_DELAY_SECONDS = 2;
+  private static final int RETRY_MAX_TIME_SECONDS = 20;
   private static final Pattern STATUS_CODE_AT_END =
       Pattern.compile("(\\d{3})\\s*$");
 
@@ -34,15 +37,21 @@ public final class PageOpenChecker {
           "--show-error",
           "--output", outputFile,
           "--write-out", "%{http_code}",
+          "--retry", String.valueOf(RETRIES),
+          "--retry-delay", String.valueOf(RETRY_DELAY_SECONDS),
+          "--retry-max-time", String.valueOf(RETRY_MAX_TIME_SECONDS),
+          "--retry-connrefused",
           "--connect-timeout", String.valueOf(CONNECT_TIMEOUT_SECONDS),
           "--max-time", String.valueOf(MAX_TIME_SECONDS),
           url)
           .redirectErrorStream(true)
           .start();
 
+      long processTimeoutSeconds = MAX_TIME_SECONDS * 2L
+          + RETRY_MAX_TIME_SECONDS
+          + RETRY_DELAY_SECONDS * RETRIES + 10;
       if (!process.waitFor(
-          Duration.ofSeconds(MAX_TIME_SECONDS + CONNECT_TIMEOUT_SECONDS)
-              .toMillis(),
+          Duration.ofSeconds(processTimeoutSeconds).toMillis(),
           TimeUnit.MILLISECONDS)) {
         process.destroyForcibly();
         System.err.println("HTTP check " + url
